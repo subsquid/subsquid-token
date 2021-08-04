@@ -18,7 +18,15 @@ async function main() {
   const subsquid = await Subsquid.deploy();
 
   await subsquid.deployed();
+  console.log("Deployment Completed")
 
+  if(hre.network.name !== "localhost"){
+  console.log("Starting etherscan verification")
+  await hre.run("verify:verify", {
+    address: subsquid.address,
+    constructorArguments: [],
+  });
+  }
   console.log("Subsquid deployed to:", subsquid.address);
 }
 
