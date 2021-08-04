@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "Subsquid ERC20 Token",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "@openzeppelin/contracts-upgradeable": "^4.2.0"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
