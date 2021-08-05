@@ -30,6 +30,9 @@
     "deploy:local": "npm run clean && hardhat run --network localhost scripts/deploy.ts",
     "deploy:ropsten": "npm run clean && hardhat run --network ropsten scripts/deploy.ts",
     "deploy:rinkeby": "npm run clean && hardhat run --network rinkeby scripts/deploy.ts",
+    "deploy-upgrade:local": "hardhat run --network localhost scripts/upgradeV1.ts",
+    "deploy-upgrade:ropsten": "hardhat run --network ropsten scripts/upgradeV1.ts",
+    "deploy-upgrade:rinkeby": "hardhat run --network rinkeby scripts/upgradeV1.ts",
     "test": "hardhat test"
   },
   "repository": {

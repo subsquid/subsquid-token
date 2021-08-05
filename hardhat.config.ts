@@ -1,8 +1,8 @@
+require('@openzeppelin/hardhat-upgrades');
+require('dotenv').config()
 import { task, HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
-require('@openzeppelin/hardhat-upgrades');
-require('dotenv').config()
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -33,11 +33,13 @@ const config: HardhatUserConfig ={
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${process.env.INFURA_KEY}`,
-      accounts: [process.env.ETH_KEY || ""]
+      accounts: [process.env.ETH_KEY || ""],
+      timeout: 100000
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${process.env.INFURA_KEY}`,
-      accounts: [process.env.ETH_KEY || ""]
+      accounts: [process.env.ETH_KEY || ""],
+      timeout: 100000
     }
   },
     etherscan: {
