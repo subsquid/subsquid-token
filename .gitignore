@@ -120,6 +120,7 @@ dist
 node_modules
 
 #Hardhat files
+coverage.json
 cache
 artifacts
 .openzeppelin

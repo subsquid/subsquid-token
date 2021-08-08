@@ -1,5 +1,6 @@
 require('@openzeppelin/hardhat-upgrades');
 require('dotenv').config()
+import "solidity-coverage"
 import { task, HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
@@ -46,7 +47,8 @@ const config: HardhatUserConfig ={
       // Your API key for Etherscan
       // Obtain one at https://etherscan.io/
       apiKey: process.env.ETHERSCAN_API_KEY,
-    }
+    },
+    
 };
 
 
