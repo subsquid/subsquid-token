@@ -51,8 +51,10 @@ const config: HardhatUserConfig ={
     },
     gasReporter: {
       currency: 'USD',
+      noColors: false,
       gasPrice: 44,
-      coinmarketcap: process.env.COIN_MARKETCAP_KEY
+      coinmarketcap: process.env.COIN_MARKETCAP_KEY,
+      // outputFile :"gasreport.txt"
     }
 };
 
