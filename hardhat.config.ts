@@ -4,8 +4,8 @@ import "solidity-coverage"
 import { task, HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
-import "hardhat-gas-reporter"
-
+import "hardhat-gas-reporter";
+import 'hardhat-abi-exporter';
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (args, hre) => {
@@ -55,6 +55,13 @@ const config: HardhatUserConfig ={
       gasPrice: 44,
       coinmarketcap: process.env.COIN_MARKETCAP_KEY,
       // outputFile :"gasreport.txt"
+    },
+    abiExporter: {
+      path: './abi',
+      clear: true,
+      flat: true,
+      only: [':Subsquid$'],
+      spacing: 2
     }
 };
 
