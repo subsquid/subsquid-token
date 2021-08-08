@@ -20,6 +20,7 @@
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.4.3",
     "hardhat": "^2.5.0",
+    "hardhat-gas-reporter": "^1.0.4",
     "solidity-coverage": "^0.7.16",
     "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
@@ -35,7 +36,7 @@
     "deploy-upgrade:ropsten": "hardhat run --network ropsten scripts/upgradeV1.ts",
     "deploy-upgrade:rinkeby": "hardhat run --network rinkeby scripts/upgradeV1.ts",
     "test": "hardhat test",
-    "coverage" : "hardhat coverage --solcoverjs ./.solcover.js"
+    "coverage": "hardhat coverage --solcoverjs ./.solcover.js"
   },
   "repository": {
     "type": "git",
