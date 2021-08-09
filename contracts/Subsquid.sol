@@ -8,8 +8,9 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
+
 contract Subsquid is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
-    function initialize() initializer public {
+    function initialize() public initializer {
         __ERC20_init("Subsquid", "SQD");
         __ERC20Burnable_init();
         __Pausable_init();
