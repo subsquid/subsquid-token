@@ -25,17 +25,15 @@ describe("Subsquid ERC20 Token", async function () {
   });
 
   it("Should successfully be able to transfer token from one account to other",async function(){
-    const transferToken = await subsquidInstance.transfer(addr1.address, amount)
-    await transferToken.wait();
+     await expect(subsquidInstance.transfer(addr1.address, amount)).to.emit(subsquidInstance, 'Transfer')
+     .withArgs(owner.address,addr1.address, amount);
     expect(await subsquidInstance.balanceOf(addr1.address)).to.equal(amount);
   })
 
   it("Should successfully be able to pause and unpause a contract",async function(){
-    const pauseContract = await subsquidInstance.pause();
-    await pauseContract.wait()
+    await expect(subsquidInstance.pause()).to.emit(subsquidInstance, 'Paused') .withArgs(owner.address);
     await expect( subsquidInstance.transfer(addr1.address, amount)).to.be.revertedWith('Pausable: paused')
-    const unPauseContract = await subsquidInstance.unpause();
-    await unPauseContract.wait()
+    await expect(subsquidInstance.unpause()).to.emit(subsquidInstance, 'Unpaused') .withArgs(owner.address);
     await subsquidInstance.transfer(addr1.address, amount)
     expect(await subsquidInstance.balanceOf(addr1.address)).to.equal(2* amount);
   })
