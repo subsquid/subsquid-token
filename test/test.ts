@@ -40,6 +40,12 @@ async function subsquidBasicTests(
           AMOUNT
         );
       });
+      it("Should fail transfer token from one account for insufficient balance", async function () {
+        expect(await subsquidInstance.balanceOf(addr2.address)).to.equal(0);
+        await expect(
+          subsquidInstance.connect(addr2).transfer(addr1.address, AMOUNT)
+        ).to.be.reverted;
+      });
     });
 
     describe("Token Pause functionality tests", async function () {
@@ -76,6 +82,11 @@ async function subsquidBasicTests(
           .withArgs(owner.address, ZERO_ADDRESS, AMOUNT);
         const newSupply = await subsquidInstance.totalSupply();
         expect(BigNumber.from(newSupply)).to.equal(totalSupply.sub(AMOUNT));
+      });
+      it("Should fail burn tokens in case of insufficient balance", async function () {
+        await expect(
+          subsquidInstance.connect(addr2).burn(AMOUNT)
+        ).to.be.revertedWith("ERC20: burn amount exceeds balance");
       });
     });
 
@@ -135,6 +146,7 @@ const beforeHookAfterUpgrade = async () => {
   await subsquidInstance.deployed();
 };
 
+// Tests for basic erc20
 subsquidBasicTests(
   beforeHookBeforeUpgrade,
   AMOUNT,
@@ -142,6 +154,8 @@ subsquidBasicTests(
   ZERO_ADDRESS,
   `Subsquid ERC20 Token Basic Tests`
 );
+
+// Tests for check UUPS Upgrades
 subsquidBasicTests(
   beforeHookAfterUpgrade,
   AMOUNT,
@@ -149,3 +163,12 @@ subsquidBasicTests(
   ZERO_ADDRESS,
   `Upgraded Subsquid ERC20 Token Basic Tests`
 );
+
+
+describe("Upgraded Subsquid Contract Test", async function () {
+  before(beforeHookAfterUpgrade);
+  it("Version function should be present", async function () {
+   expect( await subsquidInstance.getVersion()).to.be.equal("v1.0.0")
+  });
+});
+
