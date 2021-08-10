@@ -31,6 +31,16 @@ const config: HardhatUserConfig ={
       url: `https://rinkeby.infura.io/v3/${process.env.INFURA_KEY}`,
       accounts: [process.env.ETH_KEY || ""],
       timeout: 100000
+    },
+    kovan: {
+      url: `https://kovan.infura.io/v3/${process.env.INFURA_KEY}`,
+      accounts: [process.env.ETH_KEY || ""],
+      timeout: 100000
+    },
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
+      accounts: [process.env.ETH_KEY || ""],
+      timeout: 500000
     }
   },
     etherscan: {

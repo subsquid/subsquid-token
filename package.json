@@ -33,9 +33,12 @@
     "deploy:local": "npm run clean && hardhat run --network localhost scripts/deploy.ts",
     "deploy:ropsten": "npm run clean && hardhat run --network ropsten scripts/deploy.ts",
     "deploy:rinkeby": "npm run clean && hardhat run --network rinkeby scripts/deploy.ts",
+    "deploy:kovan": "npm run clean && hardhat run --network kovan scripts/deploy.ts",
+    "deploy:mainnet": "npm run clean && hardhat run --network mainnet scripts/deploy.ts",
     "deploy-upgrade:local": "hardhat run --network localhost scripts/upgradeV1.ts",
     "deploy-upgrade:ropsten": "hardhat run --network ropsten scripts/upgradeV1.ts",
     "deploy-upgrade:rinkeby": "hardhat run --network rinkeby scripts/upgradeV1.ts",
+    "deploy-upgrade:kovan": "hardhat run --network kovan scripts/upgradeV1.ts",
     "test": "hardhat test",
     "flatten": "npx hardhat flatten ./contracts/Subsquid.sol > flatten/Subsquid_flatten.sol",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js"
