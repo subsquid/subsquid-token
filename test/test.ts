@@ -2,6 +2,7 @@ import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 import { solidity } from "ethereum-waffle";
 import { BigNumber } from "ethers";
+import encoder from "../helpers/encoder";
 
 chai.use(solidity);
 
@@ -243,6 +244,27 @@ describe("Upgraded Subsquid Contract Test", async function () {
   before(beforeHookAfterUpgrade);
   it("Version function should be present", async function () {
    expect( await subsquidInstance.getVersion()).to.be.equal("v1.0.0")
+  });
+});
+
+describe("Testing upgradeability Constraints", async function () {
+  let newImplementation:any;
+  const callData = encoder(
+    "burn",
+    ['uint256'],
+    [AMOUNT]
+  );
+  before(beforeHookBeforeUpgrade);
+  beforeEach(async() =>{
+    const SubsquidContractFactoryV2 = await ethers.getContractFactory(
+      "SubsquidV1"
+    );
+    newImplementation = await SubsquidContractFactoryV2.deploy()
+  })
+
+  it("UpgradeTo and upgradeToAndCall function should only be callable via the owner address", async function () {
+    await expect(subsquidInstance.connect(addr3).upgradeTo(newImplementation.address)).to.be.revertedWith("Ownable: caller is not the owner")
+    await expect(subsquidInstance.connect(addr3).upgradeToAndCall(newImplementation.address, callData)).to.be.revertedWith("Ownable: caller is not the owner")
   });
 });
 
