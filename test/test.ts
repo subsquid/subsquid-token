@@ -6,7 +6,7 @@ import { BigNumber } from "ethers";
 chai.use(solidity);
 
 let SubsquidContractFactory: any, subsquidInstance: any;
-let owner: any, addr1: any, addr2: any;
+let owner: any, addr1: any, addr2: any, addr3: any;
 const AMOUNT = 10000;
 const MAX_CAP = "1000000000000000000000000000";
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -130,9 +130,24 @@ async function subsquidBasicTests(
       });
     });
   });
+
+  describe("Minting tokens test", async function () {
+    it("Owner of the contract should be able to mint tokens", async function () {
+      await expect(subsquidInstance.mint(addr3.address, AMOUNT)).to.emit(subsquidInstance, "Transfer")
+      .withArgs(ZERO_ADDRESS, addr3.address, AMOUNT);
+      expect(await subsquidInstance.balanceOf(addr3.address)).to.equal(
+        AMOUNT
+      );
+    });
+    it("Only Owner of the contract should be able to mint tokens", async function () {
+      await expect(subsquidInstance.connect(addr3).mint(addr3.address, AMOUNT))
+      .to.be.revertedWith('Ownable: caller is not the owner')
+    });
+   
+  });
 }
 const beforeHookBeforeUpgrade = async () => {
-  [owner, addr1, addr2] = await ethers.getSigners();
+  [owner, addr1, addr2, addr3] = await ethers.getSigners();
   SubsquidContractFactory = await ethers.getContractFactory("Subsquid");
   subsquidInstance = await upgrades.deployProxy(SubsquidContractFactory, [], {
     kind: "uups",
@@ -141,7 +156,7 @@ const beforeHookBeforeUpgrade = async () => {
 };
 
 const beforeHookAfterUpgrade = async () => {
-  [owner, addr1, addr2] = await ethers.getSigners();
+  [owner, addr1, addr2, addr3] = await ethers.getSigners();
   SubsquidContractFactory = await ethers.getContractFactory("Subsquid");
   let oldSubsquidInstance = await upgrades.deployProxy(
     SubsquidContractFactory,
