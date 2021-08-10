@@ -141,6 +141,14 @@ async function subsquidBasicTests(
             .transferFrom(owner.address, addr2.address, AMOUNT)
         ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
       });
+
+      it("Should successFully add allowance using approve", async function () {
+        expect(await subsquidInstance.allowance(owner.address,addr3.address)).to.equal(0);
+        await expect(subsquidInstance.approve(addr3.address, AMOUNT))
+          .to.emit(subsquidInstance, "Approval")
+          .withArgs(owner.address, addr3.address, AMOUNT);
+        expect(await subsquidInstance.allowance(owner.address,addr3.address)).to.equal(AMOUNT);
+      });
     });
   });
 
