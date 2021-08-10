@@ -121,6 +121,15 @@ async function subsquidBasicTests(
         );
       });
 
+      it("Should successFully decrease allowance", async function () {
+        await expect(subsquidInstance.increaseAllowance(addr2.address, AMOUNT))
+          .to.emit(subsquidInstance, "Approval")
+          .withArgs(owner.address, addr2.address, AMOUNT);
+        await expect(subsquidInstance.decreaseAllowance(addr2.address, AMOUNT/2))
+          .to.emit(subsquidInstance, "Approval")
+          .withArgs(owner.address, addr2.address, AMOUNT/2);
+      });
+
       it("Transfer from function should fail upon inadequate allowance", async function () {
         await expect(
           subsquidInstance
