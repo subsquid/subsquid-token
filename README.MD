@@ -23,7 +23,7 @@ Etherscan Key is required for contract source code verification. We use hardhat 
 
 - Clone the repo
 - npm install
-- npm run test // to run the tests
+- npm run test // to run the tests and also to get gas estimates for important operations
 - npm run coverage // to get coverage results
 
 ## Contracts
