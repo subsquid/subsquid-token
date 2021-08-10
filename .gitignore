@@ -122,5 +122,7 @@ node_modules
 #Hardhat files
 coverage.json
 cache
+
+# To be commented during mainnet release
 artifacts
 .openzeppelin
