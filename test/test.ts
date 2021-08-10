@@ -29,6 +29,9 @@ async function subsquidBasicTests(
         expect(await subsquidInstance.balanceOf(owner.address)).to.equal(
           MAX_CAP
         );
+        expect(await subsquidInstance.totalSupply()).to.equal(
+          MAX_CAP
+        );
         expect(await subsquidInstance.owner()).to.equal(owner.address);
       });
     });
@@ -248,7 +251,7 @@ describe("Upgraded Subsquid Contract Test", async function () {
 });
 
 describe("Testing upgradeability Constraints", async function () {
-  let newImplementation:any;
+  let newImplementation:any, SubsquidContractFactoryV1: any;
   const callData = encoder(
     "burn",
     ['uint256'],
@@ -256,15 +259,34 @@ describe("Testing upgradeability Constraints", async function () {
   );
   before(beforeHookBeforeUpgrade);
   beforeEach(async() =>{
-    const SubsquidContractFactoryV2 = await ethers.getContractFactory(
+     SubsquidContractFactoryV1 = await ethers.getContractFactory(
       "SubsquidV1"
     );
-    newImplementation = await SubsquidContractFactoryV2.deploy()
+    newImplementation = await SubsquidContractFactoryV1.deploy()
   })
 
   it("UpgradeTo and upgradeToAndCall function should only be callable via the owner address", async function () {
     await expect(subsquidInstance.connect(addr3).upgradeTo(newImplementation.address)).to.be.revertedWith("Ownable: caller is not the owner")
     await expect(subsquidInstance.connect(addr3).upgradeToAndCall(newImplementation.address, callData)).to.be.revertedWith("Ownable: caller is not the owner")
+  });
+
+  it("UpgradeTo call by admin should upgrade the contract to a new implementation", async function () {
+    await expect(subsquidInstance.upgradeTo(newImplementation.address)).to.emit(subsquidInstance, "Upgraded")
+    .withArgs(newImplementation.address);
+    const newProxy = await SubsquidContractFactoryV1.attach(subsquidInstance.address)
+    expect( await newProxy.getVersion()).to.be.equal("v1.0.0")
+  });
+
+  it("UpgradeToAndCall  by admin should upgrade the contract to a new implementation and execute the task as passed", async function () {
+    const oldSupply = await subsquidInstance.totalSupply()
+    expect(oldSupply).to.equal(
+      MAX_CAP
+    );
+    await expect(subsquidInstance.upgradeToAndCall(newImplementation.address, callData)).to.emit(subsquidInstance, "Upgraded")
+    .withArgs(newImplementation.address);
+    const newProxy = await SubsquidContractFactoryV1.attach(subsquidInstance.address)
+    const newSupply = await newProxy.totalSupply()
+    expect((BigNumber.from(newSupply))).to.equal(oldSupply.sub(AMOUNT))
   });
 });
 

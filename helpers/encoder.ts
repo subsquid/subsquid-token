@@ -1,3 +1,7 @@
+/**
+ * Helper to encode delegate call parameters
+ */
+
 import abi from 'ethereumjs-abi';
 import {BigNumber as BN} from 'ethers';
 
