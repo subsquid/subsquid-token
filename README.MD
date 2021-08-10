@@ -28,7 +28,7 @@ Etherscan Key is required for contract source code verification. We use hardhat 
 
 ## Contracts
 
-The smart contracts can be seen in contracts folder. ```Subsquid.sol``` is the ERC20 contract and SubsquidV1 is a test contract for testing upgradeability. A flattened version of the contract can also be seen under ```flatten/Subsquid_flatten.sol```. Simply run ```npm run flatten``` to update the flattened contract for any changes.
+The smart contracts can be seen in contracts folder. ```Subsquid.sol``` is the ERC20 contract and SubsquidV1 in mocks folder is a test contract for testing upgradeability. A flattened version of the contract can also be seen under ```flatten/Subsquid_flatten.sol```. Simply run ```npm run flatten``` to update the flattened contract for any changes.
 
 ## Deployment
 
