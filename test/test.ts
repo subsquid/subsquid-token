@@ -67,7 +67,7 @@ async function subsquidBasicTests(
     });
 
     describe("UUPS Intializer tests", async function () {
-      it("Initialize should be callable once", async function () {
+      it("Initialize should be callable only once", async function () {
         await expect(subsquidInstance.initialize()).to.be.revertedWith(
           "Initializable: contract is already initialized"
         );
@@ -163,6 +163,31 @@ async function subsquidBasicTests(
     it("Only Owner of the contract should be able to mint tokens", async function () {
       await expect(subsquidInstance.connect(addr3).mint(addr3.address, AMOUNT))
       .to.be.revertedWith('Ownable: caller is not the owner')
+    });
+   
+  });
+
+  describe("Proxy token ownership tests", async function () {
+    it("Ownership should be successfully transferred to another address", async function () {
+      expect(await subsquidInstance.owner()).to.equal(
+        owner.address
+      );
+      await expect(subsquidInstance.transferOwnership(addr3.address)).to.emit(subsquidInstance, "OwnershipTransferred")
+      .withArgs(owner.address, addr3.address);
+      expect(await subsquidInstance.owner()).to.equal(
+        addr3.address
+      );
+    });
+
+    it("Admin should be able to successfully renounce ownership", async function () {
+      expect(await subsquidInstance.owner()).to.equal(
+        addr3.address
+      );
+      await expect(subsquidInstance.connect(addr3).renounceOwnership()).to.emit(subsquidInstance, "OwnershipTransferred")
+      .withArgs(addr3.address, ZERO_ADDRESS);
+      expect(await subsquidInstance.owner()).to.equal(
+        ZERO_ADDRESS
+      );
     });
    
   });
