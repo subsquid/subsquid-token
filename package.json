@@ -30,11 +30,11 @@
     "local:node": "hardhat node",
     "compile": "hardhat compile",
     "clean": "rimraf cache artifacts .openzeppelin",
-    "deploy:local": "npm run clean && hardhat run --network localhost scripts/deploy.ts",
-    "deploy:ropsten": "npm run clean && hardhat run --network ropsten scripts/deploy.ts",
-    "deploy:rinkeby": "npm run clean && hardhat run --network rinkeby scripts/deploy.ts",
-    "deploy:kovan": "npm run clean && hardhat run --network kovan scripts/deploy.ts",
-    "deploy:mainnet": "npm run clean && hardhat run --network mainnet scripts/deploy.ts",
+    "deploy:local": "npm run clean && npm run test && hardhat run --network localhost scripts/deploy.ts",
+    "deploy:ropsten": "npm run clean && npm run test && hardhat run --network ropsten scripts/deploy.ts",
+    "deploy:rinkeby": "npm run clean && npm run test && hardhat run --network rinkeby scripts/deploy.ts",
+    "deploy:kovan": "npm run clean && npm run test && hardhat run --network kovan scripts/deploy.ts",
+    "deploy:mainnet": "npm run clean && npm run test && hardhat run --network mainnet scripts/deploy.ts",
     "deploy-upgrade:local": "hardhat run --network localhost scripts/upgradeV1.ts",
     "deploy-upgrade:ropsten": "hardhat run --network ropsten scripts/upgradeV1.ts",
     "deploy-upgrade:rinkeby": "hardhat run --network rinkeby scripts/upgradeV1.ts",
@@ -50,7 +50,7 @@
   "keywords": [
     "erc20"
   ],
-  "author": "",
+  "author": "Subsquid Team",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/subsquid/subsquid-token/issues"
