@@ -1,8 +1,8 @@
 import chai, { expect } from "chai";
-import { ethers } from "hardhat";
 import { solidity } from "ethereum-waffle";
 import { BigNumber } from "ethers";
-import encoder from "../helpers/encoder";
+import { deployContract, upgradeImplementation , encodeCall as encoder} from "../scripts/helpers";
+const { ethers } = require("hardhat");
 
 chai.use(solidity);
 
@@ -199,29 +199,14 @@ async function subsquidBasicTests(
 const beforeHookBeforeUpgrade = async () => {
   [owner, addr1, addr2, addr3] = await ethers.getSigners();
   SubsquidContractFactory = await ethers.getContractFactory("Subsquid");
-  subsquidInstance = await upgrades.deployProxy(SubsquidContractFactory, [], {
-    kind: "uups",
-  });
-  await subsquidInstance.deployed();
+  subsquidInstance = await deployContract('Subsquid')
 };
 
 const beforeHookAfterUpgrade = async () => {
   [owner, addr1, addr2, addr3] = await ethers.getSigners();
   SubsquidContractFactory = await ethers.getContractFactory("Subsquid");
-  let oldSubsquidInstance = await upgrades.deployProxy(
-    SubsquidContractFactory,
-    [],
-    { kind: "uups" }
-  );
-  await oldSubsquidInstance.deployed();
-  const SubsquidContractFactoryV2 = await ethers.getContractFactory(
-    "SubsquidV1"
-  );
-  subsquidInstance = await upgrades.upgradeProxy(
-    oldSubsquidInstance.address,
-    SubsquidContractFactoryV2
-  );
-  await subsquidInstance.deployed();
+  let oldSubsquidInstance =  await deployContract('Subsquid')
+  subsquidInstance = await upgradeImplementation( "SubsquidV1",oldSubsquidInstance.address )
 };
 
 // Tests for basic erc20

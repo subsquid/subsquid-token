@@ -7,6 +7,9 @@ const hre = require("hardhat");
 const { ethers, upgrades } = require("hardhat");
 const fs = require('fs')
 const path = require('path')
+import { etherscanVerify, deployContract } from "./helpers";
+
+
 
 async function upgradeMain() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -17,22 +20,15 @@ async function upgradeMain() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  console.log("Starting to deploy to contract")
-  const Subsquid = await ethers.getContractFactory("Subsquid");
-  const subsquid = await upgrades.deployProxy(Subsquid, [],  { kind: 'uups' });
-
-  const deployed = await subsquid.deployed();
-  console.log("Deployment Completed")
+  const subsquid = await deployContract("Subsquid")
 
   if(hre.network.name !== "localhost"){
     const currentNetwork = hre.network.name;
     const deploymentMetadata = JSON.parse( fs.readFileSync(path.join(__dirname,`../.openzeppelin/${currentNetwork}.json`), 'utf8'))
     const implementationAddress = deploymentMetadata.impls[Object.keys(deploymentMetadata.impls)[0]].address
-  console.log("Starting etherscan verification")
-  await hre.run("verify:verify", {
-    address: implementationAddress,
-    constructorArguments: [],
-  });
+    console.log("Starting etherscan verification")
+    await etherscanVerify(hre, implementationAddress)
+ 
   }
   console.log("Subsquid deployed to:", subsquid.address);
 }
