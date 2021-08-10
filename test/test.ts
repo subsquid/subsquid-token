@@ -74,22 +74,35 @@ async function subsquidBasicTests(
       });
     });
 
-    describe("token burn functionality tests", async function () {
-      it("Should successfully be able burn tokens", async function () {
-        const totalSupply = await subsquidInstance.totalSupply();
-        await expect(subsquidInstance.burn(AMOUNT))
-          .to.emit(subsquidInstance, "Transfer")
-          .withArgs(owner.address, ZERO_ADDRESS, AMOUNT);
-        const newSupply = await subsquidInstance.totalSupply();
-        expect(BigNumber.from(newSupply)).to.equal(totalSupply.sub(AMOUNT));
-      });
-      it("Should fail burn tokens in case of insufficient balance", async function () {
-        await expect(
-          subsquidInstance.connect(addr2).burn(AMOUNT)
-        ).to.be.revertedWith("ERC20: burn amount exceeds balance");
-      });
+  describe("token burn functionality tests", async function () {
+    it("Should successfully be able burn tokens", async function () {
+      const totalSupply = await subsquidInstance.totalSupply();
+      await expect(subsquidInstance.burn(AMOUNT))
+        .to.emit(subsquidInstance, "Transfer")
+        .withArgs(owner.address, ZERO_ADDRESS, AMOUNT);
+      const newSupply = await subsquidInstance.totalSupply();
+      expect(BigNumber.from(newSupply)).to.equal(totalSupply.sub(AMOUNT));
+    });
+    it("Should fail burn tokens in case of insufficient balance", async function () {
+      await expect(
+        subsquidInstance.connect(addr2).burn(AMOUNT)
+      ).to.be.revertedWith("ERC20: burn amount exceeds balance");
     });
 
+    it("Should Successfully burn tokens to which you have allowance to", async function () {
+      await subsquidInstance.increaseAllowance(addr2.address, AMOUNT);
+      await expect(
+        subsquidInstance.connect(addr2).burnFrom(owner.address, AMOUNT)
+      ) .to.emit(subsquidInstance, "Transfer")
+      .withArgs(owner.address, ZERO_ADDRESS, AMOUNT);
+    });
+
+    it("Should fail burning tokens to which you do not have allowance to", async function () {
+      await expect(
+        subsquidInstance.connect(addr2).burnFrom(owner.address, AMOUNT)
+      ) .to.be.revertedWith('ERC20: burn amount exceeds allowance')
+    });
+  });
     describe("token allowance tests", async function () {
       it("Should successFully add allowance and be able to transfer amounts", async function () {
         await expect(subsquidInstance.increaseAllowance(addr2.address, AMOUNT))
