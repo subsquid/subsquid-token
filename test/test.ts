@@ -1,12 +1,12 @@
 import chai, { expect } from "chai";
 import { solidity } from "ethereum-waffle";
 import { BigNumber } from "ethers";
-import { deployContract, upgradeImplementation , encodeCall as encoder} from "../scripts/helpers";
+import { deployWithProxyContract, upgradeImplementation , encodeCall as encoder} from "../scripts/helpers";
 const { ethers } = require("hardhat");
 
 chai.use(solidity);
 
-let SubsquidContractFactory: any, subsquidInstance: any;
+let subsquidInstance: any;
 let owner: any, addr1: any, addr2: any, addr3: any;
 const AMOUNT = 10000;
 const MAX_CAP = "1000000000000000000000000000";
@@ -198,14 +198,12 @@ async function subsquidBasicTests(
 }
 const beforeHookBeforeUpgrade = async () => {
   [owner, addr1, addr2, addr3] = await ethers.getSigners();
-  SubsquidContractFactory = await ethers.getContractFactory("Subsquid");
-  subsquidInstance = await deployContract('Subsquid')
+  subsquidInstance = await deployWithProxyContract('Subsquid')
 };
 
 const beforeHookAfterUpgrade = async () => {
   [owner, addr1, addr2, addr3] = await ethers.getSigners();
-  SubsquidContractFactory = await ethers.getContractFactory("Subsquid");
-  let oldSubsquidInstance =  await deployContract('Subsquid')
+  let oldSubsquidInstance =  await deployWithProxyContract('Subsquid')
   subsquidInstance = await upgradeImplementation( "SubsquidV1",oldSubsquidInstance.address )
 };
 

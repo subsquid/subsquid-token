@@ -4,7 +4,7 @@ import {BigNumber as BN} from 'ethers';
 const { ethers, upgrades } = require("hardhat");
 
 
-export async function deployContract(contractName: string){
+export async function deployWithProxyContract(contractName: string){
     console.log("Starting to deploy to contract")
     const Subsquid = await ethers.getContractFactory(contractName);
     const subsquid = await upgrades.deployProxy(Subsquid, [],  { kind: 'uups' });
@@ -12,20 +12,30 @@ export async function deployContract(contractName: string){
     console.log("Deployment Completed")
     return subsquid;
   }
-  
-  export async function etherscanVerify(hre : any, contactAddress: string){
+
+export async function deployContract(contractName: string){
+  const SubsquidContractFactoryV1 = await ethers.getContractFactory(
+    contractName
+  );
+  const newImplementation = await SubsquidContractFactoryV1.deploy()
+  console.log('New implementation Address', newImplementation.address)
+  return newImplementation;
+}
+
+export async function upgradeImplementation(contractName:string, proxyAddress: string){
+    const Subsquid = await ethers.getContractFactory(contractName);
+    const subsquid = await upgrades.upgradeProxy(proxyAddress,Subsquid);
+    await subsquid.deployed();
+    return subsquid;
+  }
+
+export async function etherscanVerify(hre : any, contactAddress: string){
     await hre.run("verify:verify", {
       address: contactAddress,
       constructorArguments: [],
     });
   }
 
-  export async function upgradeImplementation(contractName:string, proxyAddress: string){
-    const Subsquid = await ethers.getContractFactory(contractName);
-    const subsquid = await upgrades.upgradeProxy(proxyAddress,Subsquid);
-    await subsquid.deployed();
-    return subsquid;
-  }
   
 
   /**
