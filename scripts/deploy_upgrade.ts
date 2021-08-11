@@ -23,6 +23,7 @@ async function upgradeWithGnosis() {
   // We get the contract to deploy
   const contract = 'SubsquidV1';
   const newImplementation = await deployContract(contract);
+  await newImplementation.deployed()
   if(hre.network.name !== "localhost"){
   await etherscanVerify(hre,newImplementation.address)
   }
