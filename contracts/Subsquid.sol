@@ -24,7 +24,7 @@ PausableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        _mint(owner, 1000000000 * 10 ** decimals());
+        _mint(owner, 1337000000 * 10 ** decimals());
     }
 
    /// @notice Pauses contract transfers callable only by admin
