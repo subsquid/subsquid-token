@@ -53,3 +53,7 @@ The smart contracts can be seen in contracts folder. ```Subsquid.sol``` is the E
 ```
 - npm run deploy:mainnet
 ```
+
+### Notes
+
+- If in case etherscan verfication fails, Kindly note the deployed contract address and try to reverify using "npx hardhat verify --network <network-name> "<contract-address>"
