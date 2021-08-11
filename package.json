@@ -41,7 +41,7 @@
     "deploy-upgrade:ropsten": " npm run test && hardhat run --network ropsten scripts/upgrade_without_gnosis.ts",
     "deploy-upgrade:rinkeby": " npm run test && hardhat run --network rinkeby scripts/upgrade_without_gnosis.ts",
     "deploy-upgrade:kovan": " npm run test && hardhat run --network kovan scripts/upgrade_without_gnosis.ts",
-    "deploy-upgrade:gnosis": "npm run clean && npm run test && hardhat run --network rinkeby scripts/deploy_upgrade.ts",
+    "deploy-upgrade:gnosis": " npm run test && hardhat run --network rinkeby scripts/deploy_upgrade.ts",
     "test": "hardhat test",
     "flatten": "npx hardhat flatten ./contracts/Subsquid.sol > flatten/Subsquid_flatten.sol",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js"
