@@ -70,6 +70,7 @@ For Gnosis, Only rinkeby is supported
 - npm run deploy:mainnet
 ```
 For Gnosis
+
  ``` npm run deploy-upgrade:gnosis-mainnet```
 
  You will get a new implementation address which you will have to use to create a upgrade proposal in for example openzeppelin defender admin to which it will successfully upgrade after stakeholder approval reaches minimum threshold.
