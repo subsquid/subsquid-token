@@ -18,7 +18,7 @@ COIN_MARKETCAP_KEY="<Paste-Your-Key-here>"
 GNOSIS_CONTRACT_ADDRESS="<Paste-Your-Address>" # For testnets only rinkeby is supported
 HARDHAT_VERBOSE=true
 ```
-- Etherscan Key is required for contract source code verification. We use hardhat etherscan plugin ti automatically verify the contract during deployment. You can get it [here](https://etherscan.io/apidocs).
+- Etherscan Key is required for contract source code verification. We use hardhat etherscan plugin to automatically verify the contract during deployment. You can get it [here](https://etherscan.io/apidocs).
 - ETH_KEY is the private ethereum key with which the contract is going to be deployed with to the mainnet / testnets. It should have sufficient funds for spending the contract deployment costs.
 - INFURA_KEY can be obtained [here](https://infura.io/). 
 - COIN_MARKETCAP_KEY is used to get gas cost estimates while running the tests. It will give an approximate value of gas cost incurred using the gas price (Default 44) in gwei and currency (Default USD) parameters defined in hardhat.config.ts file.
