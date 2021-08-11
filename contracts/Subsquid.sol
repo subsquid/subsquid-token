@@ -28,19 +28,19 @@ PausableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
     }
 
    /// @notice Pauses contract transfers callable only by admin
-    function pause() public onlyOwner {
+    function pause()  public virtual onlyOwner {
         _pause();
     }
 
     /// @notice unPauses contract transfers callable only by admin
-    function unpause() public onlyOwner {
+    function unpause() public virtual onlyOwner {
         _unpause();
     }
 
     /// @notice Mints token to the to address
     /// @param to Address to mint tokens
     /// @param amount Amount of tokens to be minted
-    function mint(address to, uint256 amount) public onlyOwner {
+    function mint(address to, uint256 amount) public virtual onlyOwner {
         _mint(to, amount);
     } 
     
@@ -48,6 +48,7 @@ PausableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
     function _beforeTokenTransfer(address from, address to, uint256 amount)
         internal
         whenNotPaused
+        virtual
         override
     {
         super._beforeTokenTransfer(from, to, amount);
@@ -57,6 +58,7 @@ PausableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
     function _authorizeUpgrade(address newImplementation)
         internal
         onlyOwner
+        virtual
         override
     {}
 }
