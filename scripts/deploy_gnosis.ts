@@ -22,7 +22,7 @@ async function upgradeWithGnosis() {
 
   // We get the contract to deploy
   const GNOSIS_SAFE = process.env.GNOSIS_CONTRACT_ADDRESS || '';
-  const subsquid = await deployWithProxyContract("Subsquid");
+  const subsquid = await deployWithProxyContract("Subsquid", GNOSIS_SAFE);
   console.log('Transferring Admin Privileges to Gnosis contract')
   await subsquid.transferOwnership(GNOSIS_SAFE);
   console.log('Transferred OwnerShip to Gnosis Wallet')

@@ -17,14 +17,14 @@ contract Subsquid is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable,
 PausableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
 
     /// @notice initialiser function which will only called once upon contract creation
-    function initialize() public initializer {
+    function initialize(address owner) public initializer {
         __ERC20_init("Subsquid", "SQD");
         __ERC20Burnable_init();
         __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        _mint(msg.sender, 1000000000 * 10 ** decimals());
+        _mint(owner, 1000000000 * 10 ** decimals());
     }
 
    /// @notice Pauses contract transfers callable only by admin

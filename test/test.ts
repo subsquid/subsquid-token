@@ -72,7 +72,7 @@ async function subsquidBasicTests(
 
     describe("UUPS Intializer tests", async function () {
       it("Initialize should be callable only once", async function () {
-        await expect(subsquidInstance.initialize()).to.be.revertedWith(
+        await expect(subsquidInstance.initialize(owner.address)).to.be.revertedWith(
           "Initializable: contract is already initialized"
         );
       });
@@ -198,12 +198,12 @@ async function subsquidBasicTests(
 }
 const beforeHookBeforeUpgrade = async () => {
   [owner, addr1, addr2, addr3] = await ethers.getSigners();
-  subsquidInstance = await deployWithProxyContract('Subsquid')
+  subsquidInstance = await deployWithProxyContract('Subsquid', owner.address)
 };
 
 const beforeHookAfterUpgrade = async () => {
   [owner, addr1, addr2, addr3] = await ethers.getSigners();
-  let oldSubsquidInstance =  await deployWithProxyContract('Subsquid')
+  let oldSubsquidInstance =  await deployWithProxyContract('Subsquid', owner.address)
   subsquidInstance = await upgradeImplementation( "SubsquidV1",oldSubsquidInstance.address )
 };
 

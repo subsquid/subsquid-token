@@ -20,7 +20,8 @@ async function upgradeMain() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const subsquid = await deployWithProxyContract("Subsquid")
+  const [deployer] = await ethers.getSigners();
+  const subsquid = await deployWithProxyContract("Subsquid", deployer.address)
 
   if(hre.network.name !== "localhost"){
     const currentNetwork = hre.network.name;

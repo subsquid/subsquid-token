@@ -4,10 +4,10 @@ import {BigNumber as BN} from 'ethers';
 const { ethers, upgrades } = require("hardhat");
 
 
-export async function deployWithProxyContract(contractName: string){
+export async function deployWithProxyContract(contractName: string , accountHolder: string){
     console.log("Starting to deploy to contract")
     const Subsquid = await ethers.getContractFactory(contractName);
-    const subsquid = await upgrades.deployProxy(Subsquid, [],  { kind: 'uups' });
+    const subsquid = await upgrades.deployProxy(Subsquid, [accountHolder],  { kind: 'uups' });
     await subsquid.deployed();
     console.log("Deployment Completed")
     return subsquid;
