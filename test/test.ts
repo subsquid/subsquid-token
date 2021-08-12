@@ -9,7 +9,7 @@ chai.use(solidity);
 let subsquidInstance: any;
 let owner: any, addr1: any, addr2: any, addr3: any;
 const AMOUNT = 10000;
-const MAX_CAP = "1000000000000000000000000000";
+const MAX_CAP = "1337000000000000000000000000";
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 async function subsquidBasicTests(
