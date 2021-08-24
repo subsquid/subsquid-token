@@ -32,6 +32,9 @@ async function subsquidBasicTests(
         expect(await subsquidInstance.totalSupply()).to.equal(
           MAX_CAP
         );
+        expect(await subsquidInstance.cap()).to.equal(
+          MAX_CAP
+        );
         expect(await subsquidInstance.owner()).to.equal(owner.address);
       });
     });
@@ -59,6 +62,9 @@ async function subsquidBasicTests(
           .withArgs(owner.address);
         await expect(
           subsquidInstance.transfer(addr1.address, AMOUNT)
+        ).to.be.revertedWith("Pausable: paused");
+        await expect(
+          subsquidInstance.mint(addr1.address, AMOUNT)
         ).to.be.revertedWith("Pausable: paused");
         await expect(subsquidInstance.unpause())
           .to.emit(subsquidInstance, "Unpaused")
@@ -158,11 +164,19 @@ async function subsquidBasicTests(
 
   describe("Minting tokens test", async function () {
     it("Owner of the contract should be able to mint tokens", async function () {
-      await expect(subsquidInstance.mint(addr3.address, AMOUNT)).to.emit(subsquidInstance, "Transfer")
-      .withArgs(ZERO_ADDRESS, addr3.address, AMOUNT);
+      await expect(subsquidInstance.mint(addr3.address, 2 * AMOUNT)).to.emit(subsquidInstance, "Transfer")
+      .withArgs(ZERO_ADDRESS, addr3.address, 2* AMOUNT);
       expect(await subsquidInstance.balanceOf(addr3.address)).to.equal(
-        AMOUNT
+        2* AMOUNT
       );
+    });
+    
+    it("Minting should fail when trying to mint over MAX_CAP", async function () {
+      expect(await subsquidInstance.totalSupply()).to.equal(
+        MAX_CAP
+      );
+      await expect(subsquidInstance.mint(addr3.address, AMOUNT))
+      .to.be.revertedWith('ERC20Capped: cap exceeded')
     });
     it("Only Owner of the contract should be able to mint tokens", async function () {
       await expect(subsquidInstance.connect(addr3).mint(addr3.address, AMOUNT))
