@@ -614,6 +614,51 @@ abstract contract ERC20BurnableUpgradeable is Initializable, ContextUpgradeable,
 }
 
 
+// File @openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20CappedUpgradeable.sol@v4.2.0
+
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
+
+
+/**
+ * @dev Extension of {ERC20} that adds a cap to the supply of tokens.
+ */
+abstract contract ERC20CappedUpgradeable is Initializable, ERC20Upgradeable {
+    uint256 private _cap;
+
+    /**
+     * @dev Sets the value of the `cap`. This value is immutable, it can only be
+     * set once during construction.
+     */
+    function __ERC20Capped_init(uint256 cap_) internal initializer {
+        __Context_init_unchained();
+        __ERC20Capped_init_unchained(cap_);
+    }
+
+    function __ERC20Capped_init_unchained(uint256 cap_) internal initializer {
+        require(cap_ > 0, "ERC20Capped: cap is 0");
+        _cap = cap_;
+    }
+
+    /**
+     * @dev Returns the cap on the token's total supply.
+     */
+    function cap() public view virtual returns (uint256) {
+        return _cap;
+    }
+
+    /**
+     * @dev See {ERC20-_mint}.
+     */
+    function _mint(address account, uint256 amount) internal virtual override {
+        require(ERC20Upgradeable.totalSupply() + amount <= cap(), "ERC20Capped: cap exceeded");
+        super._mint(account, amount);
+    }
+    uint256[50] private __gap;
+}
+
+
 // File @openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol@v4.2.0
 
 // SPDX-License-Identifier: MIT
@@ -1399,22 +1444,24 @@ pragma solidity ^0.8.2;
 
 
 
+
 /// @title Subsquid ERC20 Token
 /// @author Subsquid Team
 /// @notice You can use this contract for investing in subquid ecosystem
 /// @dev The contract is based on openzepplin upgradable ERC20 standards using UUPS upgradability mechanism
 contract Subsquid is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, 
-PausableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
+PausableUpgradeable, ERC20CappedUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
 
-    /// @notice initialiser function which will only called once upon contract creation
-    function initialize(address owner) public initializer {
+    /// @dev initialiser function which will only called once upon contract creation
+    function initialize(address owner, uint256 _initialSupply) public initializer {
         __ERC20_init("Subsquid", "SQD");
+        __ERC20Capped_init(_initialSupply); 
         __ERC20Burnable_init();
         __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 
-        _mint(owner, 1337000000 * 10 ** decimals());
+        _mint(owner, _initialSupply);
     }
 
    /// @notice Pauses contract transfers callable only by admin
@@ -1430,10 +1477,26 @@ PausableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
     /// @notice Mints token to the to address
     /// @param to Address to mint tokens
     /// @param amount Amount of tokens to be minted
-    function mint(address to, uint256 amount) public virtual onlyOwner {
+    function mint(address to, uint256 amount) 
+        public 
+        virtual
+        whenNotPaused
+        onlyOwner 
+    {
         _mint(to, amount);
     } 
-    
+
+    /// @dev Overides internal mint function to use capped varient
+    /// @param account Address to mint tokens
+    /// @param amount Amount of tokens to be minted
+    function _mint(address account, uint256 amount)
+        internal
+        virtual
+        override(ERC20Upgradeable, ERC20CappedUpgradeable)
+    {
+        ERC20CappedUpgradeable._mint(account, amount);
+    }
+
     /// @dev token transfer hooks called before every transfer
     function _beforeTokenTransfer(address from, address to, uint256 amount)
         internal

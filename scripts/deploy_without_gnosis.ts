@@ -4,7 +4,8 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const { ethers, upgrades } = require("hardhat");
+const { ethers } = require("hardhat");
+import {MAX_CAP} from './constants';
 const fs = require('fs')
 const path = require('path')
 import { etherscanVerify, deployWithProxyContract } from "./helpers";
@@ -21,7 +22,7 @@ async function upgradeMain() {
 
   // We get the contract to deploy
   const [deployer] = await ethers.getSigners();
-  const subsquid = await deployWithProxyContract("Subsquid", deployer.address)
+  const subsquid = await deployWithProxyContract("Subsquid", deployer.address, MAX_CAP)
 
   if(hre.network.name !== "localhost"){
     const currentNetwork = hre.network.name;

@@ -6,7 +6,7 @@
 
 export {}; // Fix for  block scoped variable
 const hre = require("hardhat");
-const { ethers, upgrades } = require("hardhat");
+import {MAX_CAP} from './constants';
 const fs = require('fs')
 const path = require('path')
 
@@ -22,7 +22,7 @@ async function upgradeWithGnosis() {
 
   // We get the contract to deploy
   const GNOSIS_SAFE = process.env.GNOSIS_CONTRACT_ADDRESS || '';
-  const subsquid = await deployWithProxyContract("Subsquid", GNOSIS_SAFE);
+  const subsquid = await deployWithProxyContract("Subsquid", GNOSIS_SAFE, MAX_CAP);
   console.log('Transferring Admin Privileges to Gnosis contract')
   await subsquid.transferOwnership(GNOSIS_SAFE);
   console.log('Transferred OwnerShip to Gnosis Wallet')
