@@ -19,6 +19,7 @@ PausableUpgradeable, ERC20CappedUpgradeable, OwnableUpgradeable, UUPSUpgradeable
 
     /// @dev initialiser function which will only called once upon contract creation
     function initialize(address owner, uint256 _initialSupply) public initializer {
+        require(owner != address(0), "ERC20: owner cannot be zero address");
         __ERC20_init("Subsquid", "SQD");
         __ERC20Capped_init(_initialSupply); 
         __ERC20Burnable_init();

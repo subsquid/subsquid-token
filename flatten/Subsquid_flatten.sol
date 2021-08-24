@@ -87,7 +87,7 @@ interface IERC20Upgradeable {
 
 // File @openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -116,7 +116,7 @@ interface IERC20MetadataUpgradeable is IERC20Upgradeable {
 
 // File @openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -166,7 +166,7 @@ abstract contract Initializable {
 
 // File @openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -200,7 +200,7 @@ abstract contract ContextUpgradeable is Initializable {
 
 // File @openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -563,7 +563,7 @@ contract ERC20Upgradeable is Initializable, ContextUpgradeable, IERC20Upgradeabl
 
 // File @openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -616,7 +616,7 @@ abstract contract ERC20BurnableUpgradeable is Initializable, ContextUpgradeable,
 
 // File @openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20CappedUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -661,7 +661,7 @@ abstract contract ERC20CappedUpgradeable is Initializable, ERC20Upgradeable {
 
 // File @openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -760,7 +760,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
 
 // File @openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -840,7 +840,7 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
 
 // File @openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -859,7 +859,7 @@ interface IBeaconUpgradeable {
 
 // File @openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -1046,7 +1046,7 @@ library AddressUpgradeable {
 
 // File @openzeppelin/contracts-upgradeable/utils/StorageSlotUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -1133,7 +1133,7 @@ library StorageSlotUpgradeable {
 
 // File @openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.2;
 
@@ -1369,7 +1369,7 @@ abstract contract ERC1967UpgradeUpgradeable is Initializable {
 
 // File @openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol@v4.2.0
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -1436,7 +1436,7 @@ abstract contract UUPSUpgradeable is Initializable, ERC1967UpgradeUpgradeable {
 
 // File contracts/Subsquid.sol
 
-// SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.2;
 
 
@@ -1454,6 +1454,7 @@ PausableUpgradeable, ERC20CappedUpgradeable, OwnableUpgradeable, UUPSUpgradeable
 
     /// @dev initialiser function which will only called once upon contract creation
     function initialize(address owner, uint256 _initialSupply) public initializer {
+        require(owner != address(0), "ERC20: owner cannot be zero address");
         __ERC20_init("Subsquid", "SQD");
         __ERC20Capped_init(_initialSupply); 
         __ERC20Burnable_init();
