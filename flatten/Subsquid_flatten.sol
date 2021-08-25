@@ -1748,8 +1748,8 @@ pragma solidity ^0.8.2;
 
 /// @title Subsquid ERC20 Token
 /// @author Subsquid Team
-/// @notice You can use this contract for investing in subquid ecosystem
-/// @dev The contract is based on openzepplin upgradable ERC20 standards using UUPS upgradability mechanism
+/// @notice You can use this contract for investing in subsquid ecosystem
+/// @dev The contract is based on openzeppelin upgradable ERC20 standards using UUPS upgradability mechanism
 contract Subsquid is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, 
 PausableUpgradeable, ERC20CappedUpgradeable, AccessControlUpgradeable, UUPSUpgradeable {
 
