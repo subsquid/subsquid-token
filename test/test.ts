@@ -10,6 +10,10 @@ chai.use(solidity);
 let subsquidInstance: any;
 let owner: any, addr1: any, addr2: any, addr3: any;
 const AMOUNT = 10000;
+const DEFAULT_ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000';
+const MINTER_ROLE = '0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6';
+const PAUSER_ROLE = '0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a';
+const UPGRADER_ROLE = '0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3'
 
 
 async function subsquidBasicTests(
@@ -35,7 +39,16 @@ async function subsquidBasicTests(
         expect(await subsquidInstance.cap()).to.equal(
           MAX_CAP
         );
-        expect(await subsquidInstance.owner()).to.equal(owner.address);
+        expect(await subsquidInstance.MINTER_ROLE()).to.equal(MINTER_ROLE);
+        expect(await subsquidInstance.PAUSER_ROLE()).to.equal(PAUSER_ROLE);
+        expect(await subsquidInstance.UPGRADER_ROLE()).to.equal(UPGRADER_ROLE);
+
+        expect(await subsquidInstance.hasRole(MINTER_ROLE, owner.address)).to.equal(true);
+        expect(await subsquidInstance.hasRole(UPGRADER_ROLE, owner.address)).to.equal(true);
+        expect(await subsquidInstance.hasRole(PAUSER_ROLE, owner.address)).to.equal(true);
+        expect(await subsquidInstance.hasRole(MINTER_ROLE, addr1.address)).to.equal(false);
+        expect(await subsquidInstance.hasRole(UPGRADER_ROLE, addr1.address)).to.equal(false);
+        expect(await subsquidInstance.hasRole(PAUSER_ROLE, addr1.address)).to.equal(false);
       });
     });
     describe("Transfer tests", async function () {
@@ -180,31 +193,30 @@ async function subsquidBasicTests(
     });
     it("Only Owner of the contract should be able to mint tokens", async function () {
       await expect(subsquidInstance.connect(addr3).mint(addr3.address, AMOUNT))
-      .to.be.revertedWith('Ownable: caller is not the owner')
+      .to.be.revertedWith(
+        'AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6'
+        )
     });
    
   });
 
   describe("Proxy token ownership tests", async function () {
-    it("Ownership should be successfully transferred to another address", async function () {
-      expect(await subsquidInstance.owner()).to.equal(
-        owner.address
+    it("Admin role should be successfully granted to another address", async function () {
+      expect(await subsquidInstance.hasRole(DEFAULT_ADMIN_ROLE, owner.address)).to.equal(
+        true
       );
-      await expect(subsquidInstance.transferOwnership(addr3.address)).to.emit(subsquidInstance, "OwnershipTransferred")
-      .withArgs(owner.address, addr3.address);
-      expect(await subsquidInstance.owner()).to.equal(
-        addr3.address
-      );
+      await expect( subsquidInstance.grantRole(DEFAULT_ADMIN_ROLE, addr1.address)).to.emit(subsquidInstance, "RoleGranted")
+      .withArgs(DEFAULT_ADMIN_ROLE, addr1.address, owner.address);
     });
 
     it("Admin should be able to successfully renounce ownership", async function () {
-      expect(await subsquidInstance.owner()).to.equal(
-        addr3.address
+      expect(await subsquidInstance.hasRole(DEFAULT_ADMIN_ROLE, addr1.address)).to.equal(
+        true
       );
-      await expect(subsquidInstance.connect(addr3).renounceOwnership()).to.emit(subsquidInstance, "OwnershipTransferred")
-      .withArgs(addr3.address, ZERO_ADDRESS);
-      expect(await subsquidInstance.owner()).to.equal(
-        ZERO_ADDRESS
+      await expect( subsquidInstance.connect(addr1).renounceRole(DEFAULT_ADMIN_ROLE, addr1.address)).to.emit(subsquidInstance, "RoleRevoked")
+      .withArgs(DEFAULT_ADMIN_ROLE, addr1.address,  addr1.address);
+      expect(await subsquidInstance.hasRole(DEFAULT_ADMIN_ROLE, addr1.address)).to.equal(
+        false
       );
     });
    
@@ -263,8 +275,12 @@ describe("Testing upgradeability Constraints", async function () {
   })
 
   it("UpgradeTo and upgradeToAndCall function should only be callable via the owner address", async function () {
-    await expect(subsquidInstance.connect(addr3).upgradeTo(newImplementation.address)).to.be.revertedWith("Ownable: caller is not the owner")
-    await expect(subsquidInstance.connect(addr3).upgradeToAndCall(newImplementation.address, callData)).to.be.revertedWith("Ownable: caller is not the owner")
+    await expect(subsquidInstance.connect(addr3).upgradeTo(newImplementation.address)).to.be.revertedWith(
+      "AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3"
+      );
+    await expect(subsquidInstance.connect(addr3).upgradeToAndCall(newImplementation.address, callData)).to.be.revertedWith(
+      "AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3"
+    )
   });
 
   it("UpgradeTo call by admin should upgrade the contract to a new implementation", async function () {
