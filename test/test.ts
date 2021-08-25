@@ -181,7 +181,7 @@ async function subsquidBasicTests(
   });
 
   describe("Minting tokens test", async function () {
-    it("Owner of the contract should be able to mint tokens", async function () {
+    it("Address with Minter Role should be able to mint tokens", async function () {
       await expect(subsquidInstance.mint(addr3.address, 2 * AMOUNT)).to.emit(subsquidInstance, "Transfer")
       .withArgs(ZERO_ADDRESS, addr3.address, 2* AMOUNT);
       expect(await subsquidInstance.balanceOf(addr3.address)).to.equal(
@@ -196,10 +196,10 @@ async function subsquidBasicTests(
       await expect(subsquidInstance.mint(addr3.address, AMOUNT))
       .to.be.revertedWith('ERC20Capped: cap exceeded')
     });
-    it("Only Owner of the contract should be able to mint tokens", async function () {
+    it("Only address with Minter role should be able to mint tokens", async function () {
       await expect(subsquidInstance.connect(addr3).mint(addr3.address, AMOUNT))
       .to.be.revertedWith(
-        'AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6'
+        `AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role ${MINTER_ROLE}`
         )
     });
    
@@ -264,16 +264,16 @@ async function subsquidBasicTests(
       );
 
       await expect(subsquidInstance.connect(addr2).grantRole(PAUSER_ROLE, addr3.address)).to.be.revertedWith(
-        'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+        `AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role ${DEFAULT_ADMIN_ROLE}`
         );
       await expect(subsquidInstance.connect(addr2).grantRole(MINTER_ROLE, addr3.address)).to.be.revertedWith(
-        'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+        `AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role ${DEFAULT_ADMIN_ROLE}`
         );
       await expect(subsquidInstance.connect(addr2).grantRole(UPGRADER_ROLE, addr3.address)).to.be.revertedWith(
-        'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+        `AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role ${DEFAULT_ADMIN_ROLE}`
         );
       await expect(subsquidInstance.connect(addr2).grantRole(DEFAULT_ADMIN_ROLE, addr3.address)).to.be.revertedWith(
-          'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+          `AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role ${DEFAULT_ADMIN_ROLE}`
       );
       expect(await subsquidInstance.hasRole(MINTER_ROLE, addr3.address)).to.equal(
         true
@@ -282,7 +282,7 @@ async function subsquidBasicTests(
         false
       );
       await expect(subsquidInstance.connect(addr3).grantRole(MINTER_ROLE, addr1.address)).to.be.revertedWith(
-          'AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+          `AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role ${DEFAULT_ADMIN_ROLE}`
       );
       await expect(subsquidInstance.connect(addr2).revokeRole(MINTER_ROLE, addr3.address)).to.be.reverted;
       await expect( subsquidInstance.revokeRole(MINTER_ROLE, addr3.address)).to.emit(subsquidInstance, "RoleRevoked")
@@ -347,10 +347,10 @@ describe("Testing upgradeability Constraints", async function () {
 
   it("UpgradeTo and upgradeToAndCall function should only be callable via the owner address", async function () {
     await expect(subsquidInstance.connect(addr3).upgradeTo(newImplementation.address)).to.be.revertedWith(
-      "AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3"
+      `AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role ${UPGRADER_ROLE}`
       );
     await expect(subsquidInstance.connect(addr3).upgradeToAndCall(newImplementation.address, callData)).to.be.revertedWith(
-      "AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3"
+      `AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role ${UPGRADER_ROLE}`
     )
   });
 
