@@ -224,8 +224,19 @@ async function subsquidBasicTests(
         false
       );
     });
-   
-  });
+    it("Admin should be able to successfully revoke ownership of another role", async function () {
+      await expect( subsquidInstance.grantRole(MINTER_ROLE, addr1.address)).to.emit(subsquidInstance, "RoleGranted")
+      .withArgs(MINTER_ROLE, addr1.address, owner.address);
+      expect(await subsquidInstance.hasRole(MINTER_ROLE, addr1.address)).to.equal(
+        true
+      );
+      await expect( subsquidInstance.revokeRole(MINTER_ROLE, addr1.address)).to.emit(subsquidInstance, "RoleRevoked")
+      .withArgs(MINTER_ROLE, addr1.address,  owner.address);
+      expect(await subsquidInstance.hasRole(MINTER_ROLE, addr1.address)).to.equal(
+        false
+      );
+    });
+})
 }
 const beforeHookBeforeUpgrade = async () => {
   [owner, addr1, addr2, addr3] = await ethers.getSigners();
