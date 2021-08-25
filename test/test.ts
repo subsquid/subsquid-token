@@ -236,6 +236,61 @@ async function subsquidBasicTests(
         false
       );
     });
+    it("Admin should be able to successfully add multiple address to a role", async function () {
+      expect(await subsquidInstance.hasRole(MINTER_ROLE, addr2.address)).to.equal(
+        false
+      );
+      expect(await subsquidInstance.hasRole(MINTER_ROLE, addr3.address)).to.equal(
+        false
+      );
+      await expect( subsquidInstance.grantRole(MINTER_ROLE, addr2.address)).to.emit(subsquidInstance, "RoleGranted")
+      .withArgs(MINTER_ROLE, addr2.address, owner.address);
+      await expect( subsquidInstance.grantRole(MINTER_ROLE, addr3.address)).to.emit(subsquidInstance, "RoleGranted")
+      .withArgs(MINTER_ROLE, addr3.address, owner.address);
+      expect(await subsquidInstance.hasRole(MINTER_ROLE, addr2.address)).to.equal(
+        true
+      );
+      expect(await subsquidInstance.hasRole(MINTER_ROLE, addr3.address)).to.equal(
+        true
+      );
+    });
+
+    it("Only Admin should be able to successfully grantRoles / revokeRoles", async function () {
+      expect(await subsquidInstance.hasRole(PAUSER_ROLE, addr3.address)).to.equal(
+        false
+      );
+      expect(await subsquidInstance.hasRole(DEFAULT_ADMIN_ROLE, addr2.address)).to.equal(
+        false
+      );
+
+      await expect(subsquidInstance.connect(addr2).grantRole(PAUSER_ROLE, addr3.address)).to.be.revertedWith(
+        'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+        );
+      await expect(subsquidInstance.connect(addr2).grantRole(MINTER_ROLE, addr3.address)).to.be.revertedWith(
+        'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+        );
+      await expect(subsquidInstance.connect(addr2).grantRole(UPGRADER_ROLE, addr3.address)).to.be.revertedWith(
+        'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+        );
+      await expect(subsquidInstance.connect(addr2).grantRole(DEFAULT_ADMIN_ROLE, addr3.address)).to.be.revertedWith(
+          'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+      );
+      expect(await subsquidInstance.hasRole(MINTER_ROLE, addr3.address)).to.equal(
+        true
+      );
+      expect(await subsquidInstance.hasRole(MINTER_ROLE, addr1.address)).to.equal(
+        false
+      );
+      await expect(subsquidInstance.connect(addr3).grantRole(MINTER_ROLE, addr1.address)).to.be.revertedWith(
+          'AccessControl: account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0x0000000000000000000000000000000000000000000000000000000000000000'
+      );
+      await expect(subsquidInstance.connect(addr2).revokeRole(MINTER_ROLE, addr3.address)).to.be.reverted;
+      await expect( subsquidInstance.revokeRole(MINTER_ROLE, addr3.address)).to.emit(subsquidInstance, "RoleRevoked")
+      .withArgs(MINTER_ROLE, addr3.address,  owner.address);
+      expect(await subsquidInstance.hasRole(MINTER_ROLE, addr3.address)).to.equal(
+        false
+      );
+    });
 })
 }
 const beforeHookBeforeUpgrade = async () => {
