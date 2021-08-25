@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20CappedUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
@@ -15,7 +15,11 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 /// @notice You can use this contract for investing in subquid ecosystem
 /// @dev The contract is based on openzepplin upgradable ERC20 standards using UUPS upgradability mechanism
 contract Subsquid is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, 
-PausableUpgradeable, ERC20CappedUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
+PausableUpgradeable, ERC20CappedUpgradeable, AccessControlUpgradeable, UUPSUpgradeable {
+
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
     /// @dev initialiser function which will only called once upon contract creation
     function initialize(address owner, uint256 _initialSupply) public initializer {
@@ -24,19 +28,23 @@ PausableUpgradeable, ERC20CappedUpgradeable, OwnableUpgradeable, UUPSUpgradeable
         __ERC20Capped_init(_initialSupply); 
         __ERC20Burnable_init();
         __Pausable_init();
-        __Ownable_init();
+        __AccessControl_init();
         __UUPSUpgradeable_init();
 
+        _setupRole(DEFAULT_ADMIN_ROLE, owner);
+        _setupRole(PAUSER_ROLE, owner);
         _mint(owner, _initialSupply);
+        _setupRole(MINTER_ROLE, owner);
+        _setupRole(UPGRADER_ROLE, owner);
     }
 
-   /// @notice Pauses contract transfers callable only by admin
-    function pause()  public virtual onlyOwner {
+   /// @notice Pauses contract transfers callable only by admin with PAUSER role
+    function pause()  public virtual onlyRole(PAUSER_ROLE) {
         _pause();
     }
 
-    /// @notice unPauses contract transfers callable only by admin
-    function unpause() public virtual onlyOwner {
+    /// @notice unPauses contract transfers callable only by admin with PAUSER role
+    function unpause() public virtual onlyRole(PAUSER_ROLE) {
         _unpause();
     }
 
@@ -47,7 +55,7 @@ PausableUpgradeable, ERC20CappedUpgradeable, OwnableUpgradeable, UUPSUpgradeable
         public 
         virtual
         whenNotPaused
-        onlyOwner 
+        onlyRole(MINTER_ROLE) 
     {
         _mint(to, amount);
     } 
@@ -76,7 +84,7 @@ PausableUpgradeable, ERC20CappedUpgradeable, OwnableUpgradeable, UUPSUpgradeable
      /// @dev upgrade function called upon during upgrades to the contract
     function _authorizeUpgrade(address newImplementation)
         internal
-        onlyOwner
+        onlyRole(UPGRADER_ROLE)
         virtual
         override
     {}
