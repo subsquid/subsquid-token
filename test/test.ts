@@ -2,6 +2,7 @@ import chai, { expect } from "chai";
 import { solidity } from "ethereum-waffle";
 import { BigNumber } from "ethers";
 import { deployWithProxyContract, upgradeImplementation , encodeCall as encoder} from "../scripts/helpers";
+import { MAX_CAP, ZERO_ADDRESS  } from "../scripts/constants";
 const { ethers } = require("hardhat");
 
 chai.use(solidity);
@@ -9,8 +10,7 @@ chai.use(solidity);
 let subsquidInstance: any;
 let owner: any, addr1: any, addr2: any, addr3: any;
 const AMOUNT = 10000;
-const MAX_CAP = "1337000000000000000000000000";
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
 
 async function subsquidBasicTests(
   beforeHook: any,
@@ -30,6 +30,9 @@ async function subsquidBasicTests(
           MAX_CAP
         );
         expect(await subsquidInstance.totalSupply()).to.equal(
+          MAX_CAP
+        );
+        expect(await subsquidInstance.cap()).to.equal(
           MAX_CAP
         );
         expect(await subsquidInstance.owner()).to.equal(owner.address);
@@ -60,6 +63,9 @@ async function subsquidBasicTests(
         await expect(
           subsquidInstance.transfer(addr1.address, AMOUNT)
         ).to.be.revertedWith("Pausable: paused");
+        await expect(
+          subsquidInstance.mint(addr1.address, AMOUNT)
+        ).to.be.revertedWith("Pausable: paused");
         await expect(subsquidInstance.unpause())
           .to.emit(subsquidInstance, "Unpaused")
           .withArgs(owner.address);
@@ -72,7 +78,7 @@ async function subsquidBasicTests(
 
     describe("UUPS Intializer tests", async function () {
       it("Initialize should be callable only once", async function () {
-        await expect(subsquidInstance.initialize(owner.address)).to.be.revertedWith(
+        await expect(subsquidInstance.initialize(owner.address, MAX_CAP)).to.be.revertedWith(
           "Initializable: contract is already initialized"
         );
       });
@@ -158,11 +164,19 @@ async function subsquidBasicTests(
 
   describe("Minting tokens test", async function () {
     it("Owner of the contract should be able to mint tokens", async function () {
-      await expect(subsquidInstance.mint(addr3.address, AMOUNT)).to.emit(subsquidInstance, "Transfer")
-      .withArgs(ZERO_ADDRESS, addr3.address, AMOUNT);
+      await expect(subsquidInstance.mint(addr3.address, 2 * AMOUNT)).to.emit(subsquidInstance, "Transfer")
+      .withArgs(ZERO_ADDRESS, addr3.address, 2* AMOUNT);
       expect(await subsquidInstance.balanceOf(addr3.address)).to.equal(
-        AMOUNT
+        2* AMOUNT
       );
+    });
+    
+    it("Minting should fail when trying to mint over MAX_CAP", async function () {
+      expect(await subsquidInstance.totalSupply()).to.equal(
+        MAX_CAP
+      );
+      await expect(subsquidInstance.mint(addr3.address, AMOUNT))
+      .to.be.revertedWith('ERC20Capped: cap exceeded')
     });
     it("Only Owner of the contract should be able to mint tokens", async function () {
       await expect(subsquidInstance.connect(addr3).mint(addr3.address, AMOUNT))
@@ -198,12 +212,12 @@ async function subsquidBasicTests(
 }
 const beforeHookBeforeUpgrade = async () => {
   [owner, addr1, addr2, addr3] = await ethers.getSigners();
-  subsquidInstance = await deployWithProxyContract('Subsquid', owner.address)
+  subsquidInstance = await deployWithProxyContract('Subsquid', owner.address, MAX_CAP)
 };
 
 const beforeHookAfterUpgrade = async () => {
   [owner, addr1, addr2, addr3] = await ethers.getSigners();
-  let oldSubsquidInstance =  await deployWithProxyContract('Subsquid', owner.address)
+  let oldSubsquidInstance =  await deployWithProxyContract('Subsquid', owner.address, MAX_CAP)
   subsquidInstance = await upgradeImplementation( "SubsquidV1",oldSubsquidInstance.address )
 };
 
