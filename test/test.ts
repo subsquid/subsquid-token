@@ -51,6 +51,11 @@ async function subsquidBasicTests(
         expect(await subsquidInstance.hasRole(PAUSER_ROLE, addr1.address)).to.equal(false);
       });
     });
+    describe("Should fail the deploy contract", async function () {
+      it('Should fail deployment when zero address is passed', async function(){
+        await expect(deployWithProxyContract('Subsquid', ZERO_ADDRESS, MAX_CAP)).to.be.reverted;
+      })
+    })
     describe("Transfer tests", async function () {
       it("Should successfully be able to transfer token from one account to other", async function () {
         await expect(subsquidInstance.transfer(addr1.address, AMOUNT))
