@@ -21,6 +21,7 @@ async function upgradeWithGnosis() {
   // await hre.run('compile');
 
   // We get the contract to deploy
+  console.log("Starting to deploy")
   const contract = 'SubsquidV1';
   const newImplementation = await deployContract(contract);
   await newImplementation.deployed()

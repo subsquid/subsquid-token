@@ -21,11 +21,13 @@ async function upgradeWithGnosis() {
   // await hre.run('compile');
 
   // We get the contract to deploy
+  console.log("Deployment with gnosis is starting")
   const GNOSIS_SAFE = process.env.GNOSIS_CONTRACT_ADDRESS || '';
   const subsquid = await deployWithProxyContract("Subsquid", GNOSIS_SAFE, MAX_CAP);
-  console.log('Transferring Admin Privileges to Gnosis contract')
-  await subsquid.transferOwnership(GNOSIS_SAFE);
-  console.log('Transferred OwnerShip to Gnosis Wallet')
+  // No need for following code as gnosis contract is given permission upon initialization
+  // console.log('Transferring Admin Privileges to Gnosis contract')
+  // await subsquid.transferOwnership(GNOSIS_SAFE);
+  // console.log('Transferred OwnerShip to Gnosis Wallet')
   if(hre.network.name !== "localhost"){
     const currentNetwork = hre.network.name;
     const deploymentMetadata = JSON.parse( fs.readFileSync(path.join(__dirname,`../.openzeppelin/${currentNetwork}.json`), 'utf8'))
