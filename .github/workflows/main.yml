@@ -21,7 +21,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v1
         with:
             envkey_INFURA_KEY: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            envkey_GITHUB_PERSONAL_ACCESS_TOKEN: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            envkey_ETH_KEY: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
