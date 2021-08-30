@@ -21,8 +21,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+      - run: npm install
         env:
           INFURA_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
           ETH_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      - run: npm install
       - run: npm test
