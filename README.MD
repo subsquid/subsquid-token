@@ -3,6 +3,7 @@
 Official Implementation for Subsquid ERC20 Upgradable Token.
 
 ![Version Badge](https://img.shields.io/badge/version-1.0.0-lightgrey.svg)
+![Build](https://github.com/sachushaji/subsquid-token/actions/workflows/main.yml/badge.svg)
 
 ## Prerequisites
  - NodeJs@14 +
