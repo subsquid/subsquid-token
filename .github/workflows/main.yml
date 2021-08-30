@@ -17,12 +17,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v1
+        with:
+            envkey_INFURA_KEY: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            envkey_GITHUB_PERSONAL_ACCESS_TOKEN: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-        env:
-          INFURA_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-          ETH_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
       - run: npm test
