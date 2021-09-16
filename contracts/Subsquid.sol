@@ -10,9 +10,16 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 
-/// @title Subsquid ERC20 Token
-/// @author Subsquid Team
-/// @notice You can use this contract for investing in subsquid ecosystem
+/**
+ * @title Subsquid Token Contract
+ * @dev This is the implementation of the ERC20 Subsquid Token.
+ *
+ * The token is initially owned by the owner address
+ * (Address of a Gnosis multisig contract) in the constructor. 
+ * An initial supply is passed in the constructor that will be
+ * assigned to the owner and will be the max cap for the token.
+ *
+ */
 contract Subsquid is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, 
 PausableUpgradeable, ERC20CappedUpgradeable, AccessControlUpgradeable, UUPSUpgradeable {
 
@@ -21,6 +28,8 @@ PausableUpgradeable, ERC20CappedUpgradeable, AccessControlUpgradeable, UUPSUpgra
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
     /// @dev initialiser function which will only called once upon contract creation
+    /// @param owner Address to transfer ownership of the token
+    /// @param _initialSupply initial supply of the token that would also be the token CAP
     function initialize(address owner, uint256 _initialSupply) public initializer {
         require(owner != address(0), "ERC20: owner cannot be zero address");
         __ERC20_init("Subsquid", "SQD");
@@ -37,17 +46,17 @@ PausableUpgradeable, ERC20CappedUpgradeable, AccessControlUpgradeable, UUPSUpgra
         _setupRole(UPGRADER_ROLE, owner);
     }
 
-   /// @notice Pauses contract transfers callable only by admin with PAUSER role
+   /// @dev Pauses contract transfers callable only by admin with PAUSER role
     function pause()  public virtual onlyRole(PAUSER_ROLE) {
         _pause();
     }
 
-    /// @notice unPauses contract transfers callable only by admin with PAUSER role
+    /// @dev unPauses contract transfers callable only by admin with PAUSER role
     function unpause() public virtual onlyRole(PAUSER_ROLE) {
         _unpause();
     }
 
-    /// @notice Mints token to the to address
+    /// @dev Mints token to the to address
     /// @param to Address to mint tokens
     /// @param amount Amount of tokens to be minted
     function mint(address to, uint256 amount) 
@@ -71,6 +80,9 @@ PausableUpgradeable, ERC20CappedUpgradeable, AccessControlUpgradeable, UUPSUpgra
     }
 
     /// @dev token transfer hooks called before every transfer
+    /// @param from Address to transfer tokens from
+    /// @param to  Address to transfer tokens to
+    /// @param amount  amount of tokens to be transferred 
     function _beforeTokenTransfer(address from, address to, uint256 amount)
         internal
         whenNotPaused
@@ -81,6 +93,7 @@ PausableUpgradeable, ERC20CappedUpgradeable, AccessControlUpgradeable, UUPSUpgra
     }
 
      /// @dev upgrade function called upon during upgrades to the contract
+     /// @param newImplementation Address of the new contract implementation
     function _authorizeUpgrade(address newImplementation)
         internal
         onlyRole(UPGRADER_ROLE)
